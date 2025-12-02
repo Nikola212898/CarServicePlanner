@@ -36,7 +36,7 @@ This project is designed as a **portfolio-ready showcase** for junior .NET devel
 > *(Screenshots are located in the `/screenshots` folder inside the repository.)*
 
 ### **Dashboard**
-![Dashboard](screenshots/dashboard.png)
+![Dashboard](\CarServicePlanner\screenshots\dashboard.png)
 
 ### **Cars list**
 ![Cars list](screenshots/cars_list.png)
