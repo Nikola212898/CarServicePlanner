@@ -36,34 +36,34 @@ This project is designed as a **portfolio-ready showcase** for junior .NET devel
 > *(Screenshots are located in the `/screenshots` folder inside the repository.)*
 
 ### **Dashboard**
-![Dashboard](screenshots/dashboard.png)
+![Dashboard](CarServicePlanner/screenshots/dashboard.png)
 
 ### **Cars list**
-![Cars list](screenshots/cars_list.png)
+![Cars list](CarServicePlanner/screenshots/cars_list.png)
 
 ### **Car details**
-![Car details](screenshots/car_details.png)
+![Car details](CarServicePlanner/screenshots/car_details.png)
 
 ### **Add new car**
-![Add car](screenshots/car_create.png)
+![Add car](CarServicePlanner/screenshots/car_create.png)
 
 ### **Edit car**
-![Edit car](screenshots/car_edit.png)
+![Edit car](CarServicePlanner/screenshots/car_edit.png)
 
 ### **Upcoming services**
-![Upcoming services](screenshots/upcoming_services.png)
+![Upcoming services](CarServicePlanner/screenshots/upcoming_services.png)
 
 ### **Service history**
-![Service history](screenshots/service_history.png)
+![Service history](CarServicePlanner/screenshots/service_history.png)
 
 ### **Add service**
-![Add service](screenshots/service_create.png)
+![Add service](CarServicePlanner/screenshots/service_create.png)
 
 ### **Service details**
-![Service details](screenshots/service_details.png)
+![Service details](CarServicePlanner/screenshots/service_details.png)
 
 ### **Delete service**
-![Delete service](screenshots/service_delete.png)
+![Delete service](CarServicePlanner/screenshots/service_delete.png)
 
 ---
 
