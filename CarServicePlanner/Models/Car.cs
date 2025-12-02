@@ -3,7 +3,7 @@ using System.Diagnostics.Contracts;
 
 namespace CarServicePlanner.Models
 {
-    public class Car
+    public class Car : IValidatableObject
     {
          public int Id { get; set; }
 
@@ -34,6 +34,18 @@ namespace CarServicePlanner.Models
 
         [Display(Name = "Notes")]
         public string? Notes { get; set; } // Dodatne napomene
+
+        public ICollection<ServiceRecord>? ServiceRecords { get; set; }
+        public IEnumerable<ValidationResult> Validate(ValidationContext validationContext)
+        {
+            if (NextServiceData.HasValue && NextServiceData.Value.Date < DateTime.Today)
+            {
+                yield return new ValidationResult(
+                    "Next service date cannot be in the past.",
+                    new[] { nameof(NextServiceData) }
+                );
+            }
+        }
 
     }
 }

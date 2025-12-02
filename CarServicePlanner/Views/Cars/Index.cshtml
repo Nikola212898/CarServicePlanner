@@ -1,77 +1,96 @@
 @model IEnumerable<CarServicePlanner.Models.Car>
+@using System.Linq
 
 @{
-    ViewData["Title"] = "Index";
+    ViewData["Title"] = "Cars";
 }
 
-<h1>Index</h1>
+<div class="container mt-4">
 
-<p>
-    <a asp-action="Create">Create New</a>
-</p>
-<table class="table">
-    <thead>
-        <tr>
-            <th>
-                @Html.DisplayNameFor(model => model.Brand)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.Model)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.Year)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.Mileage)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.RegistrationNumber)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.Vin)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.NextServiceData)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.Notes)
-            </th>
-            <th></th>
-        </tr>
-    </thead>
-    <tbody>
-@foreach (var item in Model) {
-        <tr>
-            <td>
-                @Html.DisplayFor(modelItem => item.Brand)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.Model)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.Year)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.Mileage)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.RegistrationNumber)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.Vin)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.NextServiceData)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.Notes)
-            </td>
-            <td>
-                <a asp-action="Edit" asp-route-id="@item.Id">Edit</a> |
-                <a asp-action="Details" asp-route-id="@item.Id">Details</a> |
-                <a asp-action="Delete" asp-route-id="@item.Id">Delete</a>
-            </td>
-        </tr>
-}
-    </tbody>
-</table>
+    <div class="d-flex justify-content-between align-items-center mb-3">
+        <div>
+            <h2 class="mb-0">My cars</h2>
+            <small class="text-muted">Overview of all registered vehicles</small>
+        </div>
+
+        <a asp-action="Create" class="btn btn-primary">
+            <i class="bi bi-plus-circle"></i> Add new car
+        </a>
+    </div>
+
+    @if (!Model.Any())
+    {
+        <div class="card shadow-sm">
+            <div class="card-body text-center">
+                <h5 class="card-title mb-3">No cars yet</h5>
+                <p class="card-text text-muted">
+                    You don't have any cars in the system. Click the button below to add your first car.
+                </p>
+                <a asp-action="Create" class="btn btn-success">
+                    Add first car
+                </a>
+            </div>
+        </div>
+    }
+    else
+    {
+        <div class="card shadow-sm">
+            <div class="card-body p-0">
+                <table class="table table-hover mb-0 align-middle">
+                    <thead class="table-light">
+                        <tr>
+                            <th>@Html.DisplayNameFor(model => model.First().Brand)</th>
+                            <th>@Html.DisplayNameFor(model => model.First().Model)</th>
+                            <th>@Html.DisplayNameFor(model => model.First().Year)</th>
+                            <th>Mileage</th>
+                            <th>@Html.DisplayNameFor(model => model.First().RegistrationNumber)</th>
+                            <th>Next service</th>
+                            <th style="width: 160px;"></th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach (var item in Model)
+                        {
+                            <tr>
+                                <td>@item.Brand</td>
+                                <td>@item.Model</td>
+                                <td>@item.Year</td>
+                                <td>@item.Mileage.ToString("N0") km</td>
+                                <td>@item.RegistrationNumber</td>
+                                <td>
+                                    @if (item.NextServiceData.HasValue)
+                                    {
+                                        @item.NextServiceData.Value.ToString("dd.MM.yyyy")
+                                    }
+                                    else
+                                    {
+                                        <span class="text-muted">Not set</span>
+                                    }
+                                </td>
+                                <td>
+                                    <div class="btn-group btn-group-sm" role="group">
+                                        <a asp-action="Details" asp-route-id="@item.Id" class="btn btn-outline-secondary">
+                                            Details
+                                        </a>
+                                        <a asp-action="Edit" asp-route-id="@item.Id" class="btn btn-outline-primary">
+                                            Edit
+                                        </a>
+                                        <a asp-action="Delete" asp-route-id="@item.Id" class="btn btn-outline-danger">
+                                            Delete
+                                        </a>
+                                        <a asp-controller="ServiceRecords"
+                                           asp-action="Create"
+                                           asp-route-carId="@item.Id"
+                                           class="btn btn-outline-success">
+                                            Add service
+                                        </a>
+                                    </div>
+                                </td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    }
+</div>

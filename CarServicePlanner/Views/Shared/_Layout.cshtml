@@ -21,14 +21,19 @@
                 <div class="collapse navbar-collapse" id="navbarNav">
                     <ul class="navbar-nav me-auto mb-2 mb-lg-0">
 
-                        <li class="nav-item">
+                      <!--  <li class="nav-item">
                             <a class="nav-link" asp-controller="Home" asp-action="Index">Home</a>
-                        </li>
+                          </li>-->
 
                         <li class="nav-item">
                             <a class="nav-link" asp-controller="Cars" asp-action="Index">Cars</a>
                         </li>
 
+                        <li class="nav-item">
+                            <a class="nav-link" asp-area="" asp-controller="Cars" asp-action="Upcoming">
+                                Upcoming services
+                            </a>
+                        </li>
                         <!-- Ovde kasnije možeš dodavati još sekcija za Servise, Mehaničare itd -->
 
                     </ul>
@@ -36,7 +41,7 @@
             </div>
         </nav>
     </header>
-    <div class="container">
+    <div class="container content-wrapper">
         <main role="main" class="pb-3">
             @RenderBody()
         </main>

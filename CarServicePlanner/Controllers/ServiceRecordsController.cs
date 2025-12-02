@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
@@ -10,34 +10,23 @@ using CarServicePlanner.Models;
 
 namespace CarServicePlanner.Controllers
 {
-    public class CarsController : Controller
+    public class ServiceRecordsController : Controller
     {
         private readonly ApplicationDbContext _context;
 
-        public CarsController(ApplicationDbContext context)
+        public ServiceRecordsController(ApplicationDbContext context)
         {
             _context = context;
         }
 
-        // GET: Cars
+        // GET: ServiceRecords
         public async Task<IActionResult> Index()
         {
-            return View(await _context.Cars.ToListAsync());
+            var applicationDbContext = _context.ServiceRecords.Include(s => s.Car);
+            return View(await applicationDbContext.ToListAsync());
         }
 
-        public async Task<IActionResult> Upcoming()
-        {
-            var today = DateTime.Today;
-
-            var cars = await _context.Cars
-                .Where(c => c.NextServiceData.HasValue && c.NextServiceData.Value.Date >= today)
-                .OrderBy(c => c.NextServiceData)
-                .ToListAsync();
-
-            return View(cars);
-        }
-
-        // GET: Cars/Details/5
+        // GET: ServiceRecords/Details/5
         public async Task<IActionResult> Details(int? id)
         {
             if (id == null)
@@ -45,42 +34,53 @@ namespace CarServicePlanner.Controllers
                 return NotFound();
             }
 
-            var car = await _context.Cars
-                .Include(c => c.ServiceRecords)
+            var serviceRecord = await _context.ServiceRecords
+                .Include(s => s.Car)
                 .FirstOrDefaultAsync(m => m.Id == id);
-
-            if (car == null)
+            if (serviceRecord == null)
             {
                 return NotFound();
             }
 
-            return View(car);
+            return View(serviceRecord);
         }
 
-
-        // GET: Cars/Create
-        public IActionResult Create()
+        // GET: ServiceRecords/Create
+        public IActionResult Create(int? carId)
         {
+            // prikaz u drop-down-u: npr. "Renault Megane" ili registracija
+            var cars = _context.Cars
+                .Select(c => new
+                {
+                    c.Id,
+                    Display = (c.Brand ?? "") + " " + (c.Model ?? "") + " - " + (c.RegistrationNumber ?? "")
+                })
+                .ToList();
+
+            ViewData["CarId"] = new SelectList(cars, "Id", "Display", carId);
+
             return View();
         }
 
-        // POST: Cars/Create
+
+        // POST: ServiceRecords/Create
         // To protect from overposting attacks, enable the specific properties you want to bind to.
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("Id,Brand,Model,Year,Mileage,RegistrationNumber,Vin,NextServiceData,Notes")] Car car)
+        public async Task<IActionResult> Create([Bind("Id,CarId,ServiceDate,ServiceType,MileageAtService,Cost,Notes")] ServiceRecord serviceRecord)
         {
             if (ModelState.IsValid)
             {
-                _context.Add(car);
+                _context.Add(serviceRecord);
                 await _context.SaveChangesAsync();
                 return RedirectToAction(nameof(Index));
             }
-            return View(car);
+            ViewData["CarId"] = new SelectList(_context.Cars, "Id", "Brand", serviceRecord.CarId);
+            return View(serviceRecord);
         }
 
-        // GET: Cars/Edit/5
+        // GET: ServiceRecords/Edit/5
         public async Task<IActionResult> Edit(int? id)
         {
             if (id == null)
@@ -88,22 +88,23 @@ namespace CarServicePlanner.Controllers
                 return NotFound();
             }
 
-            var car = await _context.Cars.FindAsync(id);
-            if (car == null)
+            var serviceRecord = await _context.ServiceRecords.FindAsync(id);
+            if (serviceRecord == null)
             {
                 return NotFound();
             }
-            return View(car);
+            ViewData["CarId"] = new SelectList(_context.Cars, "Id", "Brand", serviceRecord.CarId);
+            return View(serviceRecord);
         }
 
-        // POST: Cars/Edit/5
+        // POST: ServiceRecords/Edit/5
         // To protect from overposting attacks, enable the specific properties you want to bind to.
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, [Bind("Id,Brand,Model,Year,Mileage,RegistrationNumber,Vin,NextServiceData,Notes")] Car car)
+        public async Task<IActionResult> Edit(int id, [Bind("Id,CarId,ServiceDate,ServiceType,MileageAtService,Cost,Notes")] ServiceRecord serviceRecord)
         {
-            if (id != car.Id)
+            if (id != serviceRecord.Id)
             {
                 return NotFound();
             }
@@ -112,12 +113,12 @@ namespace CarServicePlanner.Controllers
             {
                 try
                 {
-                    _context.Update(car);
+                    _context.Update(serviceRecord);
                     await _context.SaveChangesAsync();
                 }
                 catch (DbUpdateConcurrencyException)
                 {
-                    if (!CarExists(car.Id))
+                    if (!ServiceRecordExists(serviceRecord.Id))
                     {
                         return NotFound();
                     }
@@ -128,10 +129,11 @@ namespace CarServicePlanner.Controllers
                 }
                 return RedirectToAction(nameof(Index));
             }
-            return View(car);
+            ViewData["CarId"] = new SelectList(_context.Cars, "Id", "Brand", serviceRecord.CarId);
+            return View(serviceRecord);
         }
 
-        // GET: Cars/Delete/5
+        // GET: ServiceRecords/Delete/5
         public async Task<IActionResult> Delete(int? id)
         {
             if (id == null)
@@ -139,34 +141,35 @@ namespace CarServicePlanner.Controllers
                 return NotFound();
             }
 
-            var car = await _context.Cars
+            var serviceRecord = await _context.ServiceRecords
+                .Include(s => s.Car)
                 .FirstOrDefaultAsync(m => m.Id == id);
-            if (car == null)
+            if (serviceRecord == null)
             {
                 return NotFound();
             }
 
-            return View(car);
+            return View(serviceRecord);
         }
 
-        // POST: Cars/Delete/5
+        // POST: ServiceRecords/Delete/5
         [HttpPost, ActionName("Delete")]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(int id)
         {
-            var car = await _context.Cars.FindAsync(id);
-            if (car != null)
+            var serviceRecord = await _context.ServiceRecords.FindAsync(id);
+            if (serviceRecord != null)
             {
-                _context.Cars.Remove(car);
+                _context.ServiceRecords.Remove(serviceRecord);
             }
 
             await _context.SaveChangesAsync();
             return RedirectToAction(nameof(Index));
         }
 
-        private bool CarExists(int id)
+        private bool ServiceRecordExists(int id)
         {
-            return _context.Cars.Any(e => e.Id == id);
+            return _context.ServiceRecords.Any(e => e.Id == id);
         }
     }
 }

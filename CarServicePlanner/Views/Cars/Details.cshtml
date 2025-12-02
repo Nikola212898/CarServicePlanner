@@ -1,4 +1,7 @@
+@using System.Linq
+
 @model CarServicePlanner.Models.Car
+
 
 @{
     ViewData["Title"] = "Details";
@@ -64,3 +67,59 @@
     <a asp-action="Edit" asp-route-id="@Model?.Id">Edit</a> |
     <a asp-action="Index">Back to List</a>
 </div>
+<h4 class="mt-4">Service history</h4>
+<hr />
+
+@if (Model!.ServiceRecords == null || !Model.ServiceRecords.Any())
+{
+    <p class="text-muted">No services recorded for this car yet.</p>
+    <a asp-controller="ServiceRecords"
+       asp-action="Create"
+       asp-route-carId="@Model.Id"
+       class="btn btn-sm btn-outline-success">
+        Add first service
+    </a>
+}
+else
+{
+    <table class="table table-sm table-hover">
+        <thead class="table-light">
+            <tr>
+                <th>Date</th>
+                <th>Type</th>
+                <th>Mileage</th>
+                <th>Cost</th>
+                <th></th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var s in Model.ServiceRecords.OrderByDescending(s => s.ServiceDate))
+            {
+                <tr>
+                    <td>@s.ServiceDate.ToString("dd.MM.yyyy")</td>
+                    <td>@s.ServiceType</td>
+                    <td>@(s.MileageAtService?.ToString("N0") ?? "-") km</td>
+                    <td>
+                        @(s.Cost.HasValue ? s.Cost.Value.ToString("0.00") + " €" : "-")
+                    </td>
+                    <td>
+                        <a asp-controller="ServiceRecords"
+                           asp-action="Edit"
+                           asp-route-id="@s.Id"
+                           class="btn btn-sm btn-outline-primary">
+                            Edit
+                        </a>
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+
+    <a asp-controller="ServiceRecords"
+       asp-action="Create"
+       asp-route-carId="@Model.Id"
+       class="btn btn-sm btn-outline-success">
+        Add service
+    </a>
+}
+
