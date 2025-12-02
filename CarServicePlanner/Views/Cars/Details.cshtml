@@ -1,125 +1,129 @@
 @using System.Linq
-
 @model CarServicePlanner.Models.Car
-
 
 @{
     ViewData["Title"] = "Details";
 }
 
-<h1>Details</h1>
+<div class="container mt-4">
+    <div class="card shadow-sm mb-4">
+        <div class="card-body">
+            <h2 class="card-title mb-3">Car details</h2>
+            <hr />
 
-<div>
-    <h4>Car</h4>
-    <hr />
-    <dl class="row">
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.Brand)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.Brand)
-        </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.Model)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.Model)
-        </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.Year)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.Year)
-        </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.Mileage)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.Mileage)
-        </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.RegistrationNumber)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.RegistrationNumber)
-        </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.Vin)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.Vin)
-        </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.NextServiceData)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.NextServiceData)
-        </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.Notes)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.Notes)
-        </dd>
-    </dl>
-</div>
-<div>
-    <a asp-action="Edit" asp-route-id="@Model?.Id">Edit</a> |
-    <a asp-action="Index">Back to List</a>
-</div>
-<h4 class="mt-4">Service history</h4>
-<hr />
+            <dl class="row mb-0">
+                <dt class="col-sm-3">Brand</dt>
+                <dd class="col-sm-9">@Model.Brand</dd>
 
-@if (Model!.ServiceRecords == null || !Model.ServiceRecords.Any())
-{
-    <p class="text-muted">No services recorded for this car yet.</p>
-    <a asp-controller="ServiceRecords"
-       asp-action="Create"
-       asp-route-carId="@Model.Id"
-       class="btn btn-sm btn-outline-success">
-        Add first service
-    </a>
-}
-else
-{
-    <table class="table table-sm table-hover">
-        <thead class="table-light">
-            <tr>
-                <th>Date</th>
-                <th>Type</th>
-                <th>Mileage</th>
-                <th>Cost</th>
-                <th></th>
-            </tr>
-        </thead>
-        <tbody>
-            @foreach (var s in Model.ServiceRecords.OrderByDescending(s => s.ServiceDate))
+                <dt class="col-sm-3">Model</dt>
+                <dd class="col-sm-9">@Model.Model</dd>
+
+                <dt class="col-sm-3">Year</dt>
+                <dd class="col-sm-9">@Model.Year</dd>
+
+                <dt class="col-sm-3">Mileage</dt>
+                <dd class="col-sm-9">@Model.Mileage.ToString("N0") km</dd>
+
+                <dt class="col-sm-3">Registration</dt>
+                <dd class="col-sm-9">@Model.RegistrationNumber</dd>
+
+                <dt class="col-sm-3">VIN</dt>
+                <dd class="col-sm-9">@Model.Vin</dd>
+
+                <dt class="col-sm-3">Next service date</dt>
+                <dd class="col-sm-9">
+                    @if (Model.NextServiceData.HasValue)
+                    {
+                        @Model.NextServiceData.Value.ToString("dd.MM.yyyy")
+                    }
+                    else
+                    {
+                        <span class="text-muted">Not set</span>
+                    }
+                </dd>
+
+                <dt class="col-sm-3">Notes</dt>
+                <dd class="col-sm-9">
+                    @if (!string.IsNullOrWhiteSpace(Model.Notes))
+                    {
+                        @Model.Notes
+                    }
+                    else
+                    {
+                        <span class="text-muted">No notes</span>
+                    }
+                </dd>
+            </dl>
+
+            <div class="mt-4 d-flex justify-content-between">
+                <a asp-action="Index" class="btn btn-outline-secondary">Back to list</a>
+                <div>
+                    <a asp-action="Edit" asp-route-id="@Model.Id" class="btn btn-primary me-2">Edit</a>
+                    <a asp-action="Delete" asp-route-id="@Model.Id" class="btn btn-outline-danger">Delete</a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="card shadow-sm">
+        <div class="card-body">
+            <h4 class="card-title mb-3">Service history</h4>
+            <hr />
+
+            @if (Model.ServiceRecords == null || !Model.ServiceRecords.Any())
             {
-                <tr>
-                    <td>@s.ServiceDate.ToString("dd.MM.yyyy")</td>
-                    <td>@s.ServiceType</td>
-                    <td>@(s.MileageAtService?.ToString("N0") ?? "-") km</td>
-                    <td>
-                        @(s.Cost.HasValue ? s.Cost.Value.ToString("0.00") + " €" : "-")
-                    </td>
-                    <td>
-                        <a asp-controller="ServiceRecords"
-                           asp-action="Edit"
-                           asp-route-id="@s.Id"
-                           class="btn btn-sm btn-outline-primary">
-                            Edit
-                        </a>
-                    </td>
-                </tr>
+                <p class="text-muted">No services recorded for this car yet.</p>
+                <a asp-controller="ServiceRecords"
+                   asp-action="Create"
+                   asp-route-carId="@Model.Id"
+                   class="btn btn-sm btn-outline-success">
+                    Add first service
+                </a>
             }
-        </tbody>
-    </table>
+            else
+            {
+                var services = Model.ServiceRecords.OrderByDescending(s => s.ServiceDate);
 
-    <a asp-controller="ServiceRecords"
-       asp-action="Create"
-       asp-route-carId="@Model.Id"
-       class="btn btn-sm btn-outline-success">
-        Add service
-    </a>
-}
+                <table class="table table-sm table-hover align-middle">
+                    <thead class="table-light">
+                        <tr>
+                            <th>Date</th>
+                            <th>Type</th>
+                            <th>Mileage</th>
+                            <th>Cost</th>
+                            <th></th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach (var s in services)
+                        {
+                            <tr>
+                                <td>@s.ServiceDate.ToString("dd.MM.yyyy")</td>
+                                <td>@s.ServiceType</td>
+                                <td>@(s.MileageAtService?.ToString("N0") ?? "-") km</td>
+                                <td>
+                                    @(s.Cost.HasValue ? s.Cost.Value.ToString("0.00") + " €" : "-")
+                                </td>
+                                <td class="text-end">
+                                    <a asp-controller="ServiceRecords"
+                                       asp-action="Edit"
+                                       asp-route-id="@s.Id"
+                                       class="btn btn-sm btn-outline-primary">
+                                        Edit
+                                    </a>
+                                </td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
 
+                <a asp-controller="ServiceRecords"
+                   asp-action="Create"
+                   asp-route-carId="@Model.Id"
+                   class="btn btn-sm btn-outline-success">
+                    Add service
+                </a>
+            }
+        </div>
+    </div>
+</div>

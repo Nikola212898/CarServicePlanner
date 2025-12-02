@@ -59,6 +59,8 @@ namespace CarServicePlanner.Controllers
 
             ViewData["CarId"] = new SelectList(cars, "Id", "Display", carId);
 
+            ViewBag.SourceCarId = carId;
+
             return View();
         }
 

@@ -3,14 +3,25 @@
 @{
     ViewData["Title"] = "Upcoming services";
     var today = DateTime.Today;
+    var count = Model?.Count() ?? 0;
 }
 
 <div class="container mt-4">
     <div class="d-flex justify-content-between align-items-center mb-3">
         <div>
             <h2 class="mb-0">Upcoming services</h2>
-            <small class="text-muted">Cars with scheduled service dates in the future</small>
+            <small class="text-muted">
+                Cars with scheduled service dates in the future
+                @if (count > 0)
+                {
+                    <span class="badge bg-secondary ms-2">@count</span>
+                }
+            </small>
         </div>
+
+        <a asp-action="Index" class="btn btn-outline-secondary btn-sm">
+            Back to cars
+        </a>
     </div>
 
     @if (Model == null || !Model.Any())
@@ -38,7 +49,7 @@
                             <th>Registration</th>
                             <th>Next service date</th>
                             <th>Days left</th>
-                            <th></th>
+                            <th class="text-end" style="width: 170px;">Actions</th>
                         </tr>
                     </thead>
                     <tbody>
@@ -53,19 +64,23 @@
                                 <td>
                                     @if (daysLeft == 0)
                                     {
-                                        <span class="text-danger fw-semibold">Today</span>
+                                        <span class="badge bg-danger">Today</span>
                                     }
                                     else if (daysLeft == 1)
                                     {
-                                        <span class="text-warning fw-semibold">1 day</span>
+                                        <span class="badge bg-warning text-dark">1 day</span>
+                                    }
+                                    else if (daysLeft <= 7)
+                                    {
+                                        <span class="badge bg-warning text-dark">@daysLeft days</span>
                                     }
                                     else
                                     {
-                                        <span>@daysLeft days</span>
+                                        <span class="badge bg-success">@daysLeft days</span>
                                     }
                                 </td>
                                 <td class="text-end">
-                                    <a asp-action="Details" asp-route-id="@item.Id" class="btn btn-sm btn-outline-secondary">
+                                    <a asp-action="Details" asp-route-id="@item.Id" class="btn btn-sm btn-outline-secondary me-1">
                                         Details
                                     </a>
                                     <a asp-action="Edit" asp-route-id="@item.Id" class="btn btn-sm btn-outline-primary">

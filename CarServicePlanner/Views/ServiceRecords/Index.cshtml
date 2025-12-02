@@ -1,65 +1,88 @@
 ﻿@model IEnumerable<CarServicePlanner.Models.ServiceRecord>
 
 @{
-    ViewData["Title"] = "Index";
+    ViewData["Title"] = "Service records";
 }
 
-<h1>Index</h1>
+<div class="container mt-4">
+    <div class="d-flex justify-content-between align-items-center mb-3">
+        <div>
+            <h2 class="mb-0">Service records</h2>
+            <small class="text-muted">List of all recorded service actions</small>
+        </div>
 
-<p>
-    <a asp-action="Create">Create New</a>
-</p>
-<table class="table">
-    <thead>
-        <tr>
-            <th>
-                @Html.DisplayNameFor(model => model.Car)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.ServiceDate)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.ServiceType)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.MileageAtService)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.Cost)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.Notes)
-            </th>
-            <th></th>
-        </tr>
-    </thead>
-    <tbody>
-@foreach (var item in Model) {
-        <tr>
-            <td>
-                @Html.DisplayFor(modelItem => item.Car.Brand)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.ServiceDate)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.ServiceType)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.MileageAtService)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.Cost)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.Notes)
-            </td>
-            <td>
-                <a asp-action="Edit" asp-route-id="@item.Id">Edit</a> |
-                <a asp-action="Details" asp-route-id="@item.Id">Details</a> |
-                <a asp-action="Delete" asp-route-id="@item.Id">Delete</a>
-            </td>
-        </tr>
-}
-    </tbody>
-</table>
+        <a asp-action="Create" class="btn btn-primary btn-sm">
+            Add service
+        </a>
+    </div>
+
+    @if (Model == null || !Model.Any())
+    {
+        <div class="card shadow-sm">
+            <div class="card-body text-center">
+                <h5 class="card-title">No service records found</h5>
+                <p class="text-muted">Start by adding your first service record.</p>
+
+                <a asp-action="Create" class="btn btn-primary btn-sm">
+                    Add service
+                </a>
+            </div>
+        </div>
+    }
+    else
+    {
+        <div class="card shadow-sm">
+            <div class="card-body p-0">
+                <table class="table table-hover mb-0 align-middle">
+                    <thead class="table-light">
+                        <tr>
+                            <th>Car</th>
+                            <th>Date</th>
+                            <th>Type</th>
+                            <th>Mileage</th>
+                            <th>Cost</th>
+                            <th class="text-end" style="width: 200px;">Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach (var item in Model)
+                        {
+                            <tr>
+                                <td>
+                                    @item.Car!.Brand @item.Car.Model (@item.Car.Year)
+                                </td>
+
+                                <td>
+                                    @item.ServiceDate.ToString("dd.MM.yyyy")
+                                </td>
+
+                                <td>
+                                    @item.ServiceType
+                                </td>
+
+                                <td>
+                                    @(item.MileageAtService?.ToString("N0") ?? "-") km
+                                </td>
+
+                                <td>
+                                    @(item.Cost.HasValue ? item.Cost.Value.ToString("0.00") + " €" : "-")
+                                </td>
+
+                                <td class="text-end">
+                                    <a asp-action="Details" asp-route-id="@item.Id"
+                                       class="btn btn-sm btn-outline-secondary me-1">Details</a>
+
+                                    <a asp-action="Edit" asp-route-id="@item.Id"
+                                       class="btn btn-sm btn-outline-primary me-1">Edit</a>
+
+                                    <a asp-action="Delete" asp-route-id="@item.Id"
+                                       class="btn btn-sm btn-outline-danger">Delete</a>
+                                </td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    }
+</div>

@@ -1,57 +1,85 @@
 ﻿@model CarServicePlanner.Models.ServiceRecord
 
 @{
-    ViewData["Title"] = "Create";
+    ViewData["Title"] = "Create service";
 }
 
-<h1>Create</h1>
+<div class="container mt-4">
+    <div class="card shadow-sm">
+        <div class="card-body">
+            <h2 class="card-title mb-3">Add service record</h2>
+            <hr />
 
-<h4>ServiceRecord</h4>
-<hr />
-<div class="row">
-    <div class="col-md-4">
-        <form asp-action="Create">
-            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
-            <div class="form-group">
-                <label asp-for="CarId" class="control-label"></label>
-                <select asp-for="CarId" class ="form-control" asp-items="ViewBag.CarId"></select>
-            </div>
-            <div class="form-group">
-                <label asp-for="ServiceDate" class="control-label"></label>
-                <input asp-for="ServiceDate" class="form-control" />
-                <span asp-validation-for="ServiceDate" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="ServiceType" class="control-label"></label>
-                <input asp-for="ServiceType" class="form-control" />
-                <span asp-validation-for="ServiceType" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="MileageAtService" class="control-label"></label>
-                <input asp-for="MileageAtService" class="form-control" />
-                <span asp-validation-for="MileageAtService" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="Cost" class="control-label"></label>
-                <input asp-for="Cost" class="form-control" />
-                <span asp-validation-for="Cost" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="Notes" class="control-label"></label>
-                <input asp-for="Notes" class="form-control" />
-                <span asp-validation-for="Notes" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <input type="submit" value="Create" class="btn btn-primary" />
-            </div>
-        </form>
+            <form asp-action="Create">
+                <div asp-validation-summary="ModelOnly" class="text-danger mb-3"></div>
+
+                <div class="row g-3">
+                    <div class="col-md-6">
+                        <label asp-for="CarId" class="form-label">Car</label>
+                        <select asp-for="CarId" class="form-select" asp-items="ViewBag.CarId"></select>
+                        <span asp-validation-for="CarId" class="text-danger"></span>
+                    </div>
+
+                    <div class="col-md-6">
+                        <label asp-for="ServiceDate" class="form-label"></label>
+                        <input asp-for="ServiceDate"
+                               class="form-control"
+                               type="date"
+                               max="@DateTime.Today.ToString("yyyy-MM-dd")" />
+                        <span asp-validation-for="ServiceDate" class="text-danger"></span>
+                    </div>
+
+                    <div class="col-md-6">
+                        <label asp-for="ServiceType" class="form-label"></label>
+                        <input asp-for="ServiceType" class="form-control" />
+                        <span asp-validation-for="ServiceType" class="text-danger"></span>
+                    </div>
+
+                    <div class="col-md-6">
+                        <label asp-for="MileageAtService" class="form-label"></label>
+                        <input asp-for="MileageAtService" class="form-control" />
+                        <span asp-validation-for="MileageAtService" class="text-danger"></span>
+                    </div>
+
+                    <div class="col-md-6">
+                        <label asp-for="Cost" class="form-label"></label>
+                        <input asp-for="Cost" class="form-control" />
+                        <span asp-validation-for="Cost" class="text-danger"></span>
+                    </div>
+
+                    <div class="col-12">
+                        <label asp-for="Notes" class="form-label"></label>
+                        <textarea asp-for="Notes" class="form-control" rows="3"></textarea>
+                        <span asp-validation-for="Notes" class="text-danger"></span>
+                    </div>
+                </div>
+
+                <div class="mt-4 d-flex justify-content-between">
+                    <div>
+                        @* Ako smo dosli sa konkretnog auta, prikazi "Back to car" *@
+                        @if (ViewBag.SourceCarId != null)
+                        {
+                            <a asp-controller="Cars"
+                               asp-action="Index"
+                               class="btn btn-outline-secondary me-2">
+                                Back to list
+                            </a>
+                        }
+
+                        <a asp-action="Index" class="btn btn-outline-secondary">
+                            Back to services list
+                        </a>
+                    </div>
+
+                    <button type="submit" class="btn btn-primary">Save service</button>
+                </div>
+            </form>
+        </div>
     </div>
 </div>
 
-<div>
-    <a asp-action="Index">Back to List</a>
-</div>
-
 @section Scripts {
-    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
 }
