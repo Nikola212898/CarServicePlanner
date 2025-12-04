@@ -1,0 +1,7 @@
+*.cs linguist-language=C#
+*.cshtml linguist-language=C#
+*.razor linguist-language=C#
+
+*.html linguist-detectable=false
+*.css linguist-detectable=false
+*.js linguist-detectable=false
